@@ -7,7 +7,12 @@
 #include <agon/timer.h>
 
 #include "runtime.h"
-
+// #include "editor.h"
+// #include "text_buffer.h"
+// #include "screen.h"
+// #include "user_input.h"
+// #include "char_buffer.h"
+// #include "line_buffer.h"
 
 // runtime part of code
 #define MAX_LINES 2048                    // max number of lines in our program
@@ -252,7 +257,7 @@ void runcode(char* fname){
             vdp_waitKeyDown();
         }
 
-        
+        // always allow ESC to exit
         if(vdp_getKeyCode() == 27){
             running =false;
         }
@@ -267,11 +272,14 @@ void runcode(char* fname){
     if(DEBUGGING){
         printf("\nPress any key to exit");
     }
+           if(DEBUGGING){
+            vdp_waitKeyUp();
+            vdp_waitKeyDown();
+        }
     
-    
-    vdp_waitKeyUp();
-    vdp_waitKeyDown();
-    vdp_waitKeyUp();
+    // vdp_waitKeyUp();
+    // vdp_waitKeyDown();
+    // vdp_waitKeyUp();
     vdp_mode(previousMode);
     vdp_cursor_enable(true);
     vdp_clear_screen();
@@ -582,6 +590,38 @@ void parseLine(char *command, char *param1, char *param2){
        }
 
 
+//  process BEEP command
+//  BEEP <offset/variable> <value/variable>
+//  BEEP freq time
+
+   if (strcmp(command,"BEEP") == 0 || strcmp(command,"beep") == 0 ){
+            uint8_t p1val = *param1;
+            uint8_t p2val = *param2;
+            uint8_t freq;
+            uint8_t var;
+            uint8_t time;
+
+            if(p1val > 57){ // must be a char, ie set to another variable
+                var = *param1;
+                var = lower(var);
+                freq = varSpace[var];
+            } else { // else it is an int value
+                freq = atoi(param1);
+            }
+
+            if(p2val > 57){ // must be a char, ie set to another variable
+                var = *param2;
+                var = lower(var);
+                time = varSpace[var];
+            } else { // else it is an int value
+                time = atoi(param1);
+            }
+            if(DEBUGGING) printf("Beep at %d for %d \n", freq, time);
+            vdp_audio_play_note(0, 127, freq * 10, time * 10);
+           
+       }
+
+
 
 if (strcmp(command,"raw") == 0 || strcmp(command,"RAW") == 0 ){
             uint8_t p1val = *param1;
@@ -765,7 +805,7 @@ if (strcmp(command,"raw") == 0 || strcmp(command,"RAW") == 0 ){
                 if(subbed < 0){
                     subbed += 256;
                     varSpace[varOffest] = subbed;
-                    varSpace[carryChar] = 255;        // overrun
+                    varSpace[carryChar] = 1;        // overrun
                 } else {
                     varSpace[varOffest] = subbed;
                     varSpace[carryChar] = 0;        // no overrun, less that 256
@@ -782,7 +822,7 @@ if (strcmp(command,"raw") == 0 || strcmp(command,"RAW") == 0 ){
                 if(subbed < 0){
                     subbed += 256;
                     varSpace[varOffest] = subbed;
-                    varSpace[carryChar] = 255;        // overrun
+                    varSpace[carryChar] = 1;        // overrun
                     if(DEBUGGING) printf("OVERRUN carry set in 'a'\n");
                 } else {
                     varSpace[varOffest] = subbed;
@@ -853,11 +893,11 @@ if (strcmp(command,"raw") == 0 || strcmp(command,"RAW") == 0 ){
 
 
 
-// process WAIT command
-//  WAIT <variable1/value>
-//  WAIT hundredths of a second
+// process DELAY command
+//  DELAY <variable1/value>
+//  DELAY hundredths of a second
 
-    if (strcmp(command,"wait") == 0 || strcmp(command,"WAIT") == 0 ){
+    if (strcmp(command,"delay") == 0 || strcmp(command,"DELAY") == 0 ){
         uint8_t p1val = *param1;
         uint8_t value;
 
@@ -874,7 +914,7 @@ if (strcmp(command,"raw") == 0 || strcmp(command,"RAW") == 0 ){
             delay(value * 10);
             
         }
-        if(DEBUGGING) printf("WAIT for %d h/s\n", value);
+        if(DEBUGGING) printf("DELAY for %d h/s\n", value);
     }
   
 
@@ -1235,7 +1275,10 @@ if (strcmp(command,"raw") == 0 || strcmp(command,"RAW") == 0 ){
             labelValue = atoi(param1);
         }
 
-        if(p2val > 57){ // must be a char, ie set to another variable
+        if(p2val == 39){ // must be a single quote, ie char
+                char v = param2[2];
+                checkValue = (uint8_t)v;
+        } else  if(p2val > 57){ // must be a char, ie set to another variable
             uint8_t var = *param2;
             var = lower(var);
             checkValue = varSpace[var];
@@ -1244,6 +1287,8 @@ if (strcmp(command,"raw") == 0 || strcmp(command,"RAW") == 0 ){
             checkValue = atoi(param2);
         }
         if(DEBUGGING) printf("CALLIF LABEL %d line %d checkValue %d a: %d\n", labelValue, labels[labelValue], checkValue, varSpace[resultChar]);
+
+       
 
         if(varSpace[resultChar] == checkValue){
 
@@ -1326,12 +1371,17 @@ if (strcmp(command,"raw") == 0 || strcmp(command,"RAW") == 0 ){
         if(DEBUGGING) printf("KEY pressed was %d \n", result );
     }
 
+    // process KEY command
 
+//  WAIT
+// wait until any key press
 
+    if (strcmp(command,"wait") == 0 || strcmp(command,"WAIT") == 0 ){
+        vdp_waitKeyUp();
+        vdp_waitKeyDown();
+    }
 
-
-
-
+ 
 
 
     }       // end of command processing loop
