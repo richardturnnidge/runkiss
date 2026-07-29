@@ -1,0 +1,9 @@
+
+debug 0
+tabto 10 10
+input
+printnum Z
+CR
+printvars
+wait
+exit
