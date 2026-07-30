@@ -59,6 +59,8 @@ COMP x with 6
 COMP x to y
 
 
+A 256 byte memory store is available. By default, this is loaded at runtime from a local file, or will be empty if file loading failed.  
+
 `GETDATA <offset/variable> <variable>`   
 Read data at file offset and put into variable
 
@@ -203,7 +205,7 @@ Sends a byte to VDP.
 NOTE: Debug mode must not be active when sending VDP bytes.
 
 
-`VDPS <offset/variable> <value/variable>`  
+`VDPS <offset/variable> <count/variable>`  
 Sends a series of bytes to VDP from data store.
 
 
@@ -218,8 +220,7 @@ Turn debug off/on (0 or 1).
 
 # Code notes
 
-Not case sensitive, but cannot mix case within a command.  
-eg. `SET` or `set` are valid, `seT` is not.
+Not case sensitive.  
 
 Variables can be upper or lower case, but are the same.  
 eg. `A` is the same as `a`.
