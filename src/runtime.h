@@ -6,3 +6,4 @@ uint8_t lower(uint8_t num);
 void strip_substr(char *str, const char *sub);
 void strip_substr_array(char *arr[], size_t count, const char *sub);
 void replace_char(char *str, char old_char, char new_char);
+void toUpperCase(char *str) ;
