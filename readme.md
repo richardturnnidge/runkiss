@@ -149,6 +149,13 @@ Result is in first variable.
 NOTs variable1.  
 Result is in variable1.  
 
+`SHIFTLEFT <variable1/value>`  
+Binary shift left by bits.  
+ 
+`SHIFTRIGHT <variable1/value>`  
+Binary shift right by bits.  
+ 
+
 
 
 
@@ -226,6 +233,10 @@ would yield a coordinate of: `10 +(256 *2), 20 + (256 * 0)` ie, `PLOT 522, 20`.
 checks down status and sets '@' to ascii code or 0 if none.
 
 
+`JOY <variable1> <variable2>`   
+gets values of ports B and C for joystick input and puts results into variable 1 and 2.  
+
+
 `WAIT`  
 Waits for user to press and release any key.
 
@@ -291,18 +302,3 @@ A new code line starts after a CR.
 
 Any line's command not recognised will be ignored.
 
-# to do... bitwise operations
-I don't know why, but seems a thing it should do.  
-Make sure other SET, MATHS and COMP operations deal with binary values.  
-
-`OR <var> <var/value>`
-Var A = A or B  
-
-`AND <var> <var/value>`
-Var A = A and B  
-
-`NOT <var>`
-Var A = not A
-
-`XOR <var> <var/value>`
-Var A = A xor B  
