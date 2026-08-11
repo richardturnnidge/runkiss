@@ -71,8 +71,9 @@ Set data at given offset with value or variable
 ## Program Flow & logic
 
 
-`LABEL <number>`  
-A label with number 0-255. Used for GOTO, etc.
+`LABEL <number/name>`  
+A label with number 0-255. Used for GOTO, CALL, etc.  
+Labels can also use a text name (max 8 chars, no spaces), but will be a little slower than numerical labels.  
 
 
 `LOOP <value/variable>`  
@@ -85,19 +86,34 @@ Reduce counter and loop round if not zero.
 `GOTO <label ID>`  
 Goto label.
 
-`GOTOIF <label ID>` <value expected in '@' value/variable>  
-Goto label if 'result' is a certain value or value in a variable.
+`GOTOIF <label ID> <value/variable> <value/variable>` 
+Goto label if variables or values match.
+
+`GOTOIFNOT <label ID> <value/variable> <value/variable>` 
+Goto label if variables or values do not match.
 
 `CALL <label ID>`  
 Call labelled subroutine and return later.
 
-`CALLIF` <label ID> <value expected in '@' value/variable>  
-Call if result matches.  
-eg. if 'result' is 20, then gosub label subroutine.
+`CALLIF <label ID> <value/variable> <value/variable>`
+Call label if variables or values match. 
+
+`CALLIFNOT <label ID> <value/variable> <value/variable>`
+Call label if variables or values do not match. 
+
 
 `RET`  
 Return from a subroutine, if there is a line number in the return variable.  
 Stack allows for up to 16 nested call/returns.
+
+`TIMER <label ID> <value/variable> `
+Start an interrupt timer which calls label ID at a frequency in 100/s.  
+Set freq to 0 to cancel timer function.  
+Only one timer can operate at any time.   
+
+
+`TIMERRET`  
+Return from timer subroutine.  
 
 
 `DELAY <variable1/value>`  
@@ -126,6 +142,15 @@ MUL a b
 
 `DIV <variable1/value> <variable2>`  
 Divides variable1 or value by variable2. Result is stored in variable1 as rounded down integer. Mod is stored in 'carry flag'
+
+`SIN  <variable>`  
+Sets variable to the SIN of variable.  
+Angles go from 0-255 (instead of 0-359 deg). Value returned is from 0-127 with carry flag being set to 1 if a negative value.  
+
+`COS  <variable>`  
+Sets variable to the COS of variable.  
+Angles go from 0-255 (instead of 0-359 deg). Value returned is from 0-127 with carry flag being set to 1 if a negative value.  
+
 
 
 ## Binary Operations
@@ -244,8 +269,15 @@ Waits for user to press and release any key.
 `BEEP <offset/variable> <value/variable>`  
 Beep at freq (/10) for time (c/s)
 
-`INPUT <variable>`
+`GETNUM <variable>`
 Requests numerical input from user.
+
+`INPUT <port (B,C, or D)> <pin (value/variable)> <variable> `  
+Reads pin value on port and puts into variable, either 0 or 1.  
+
+`OUTPUT <port (B,C, or D)> <pin (value/variable)> <value/variable> `  
+Sets pin value on port and to variable/value, either 0 or 1.  
+
 
 
 ## Using the Power of VDP
